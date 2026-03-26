@@ -40,7 +40,8 @@ class CServicioTest {
 
     @Test
     void isValidEntityId() {
-        boolean valido = servicio.isValidEntityId();
-        assertTrue(valido,"Debe ser falso por defecto");
+        boolean valido = servicio.isValidEntityId(1);
+        assertTrue(valido,"Debe ser verdadero");
+        assertFalse(servicio.isValidEntityId(-1),"Debería ser falso");
     }
 }

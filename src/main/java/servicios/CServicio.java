@@ -40,7 +40,7 @@ public class CServicio implements InterfazContactoSim {
     }
 
     @Override
-    public boolean isValidEntityId() {
-        return true;
+    public boolean isValidEntityId(int id) {
+        return id>=0;
     }
 }
