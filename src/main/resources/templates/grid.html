@@ -22,27 +22,38 @@
 		</div>
 		<div class="grid" id='gr'></div>
 		<script th:inline="javascript">
-			const count = [[${count}]];
-			const colors = [[${colors}]];
+			/* El error de la "coma" se quita usando el comentario especial de Thymeleaf */
+			const count = /*[[${count}]]*/ 12;
+			const colors = /*[[${colors}]]*/ {};
+
 			function createSquares(){
 				var grid = document.getElementById('gr');
 				for(var i = 0; i < count; i++){
 					for(var j = 0; j < count; j++){
-				    	var node = document.createElement("div");
+						var node = document.createElement("div");
+						// IMPORTANTE: El ID debe ser i+'-'+j porque así lo busca el slider abajo
 						node.id = i+'-'+j;
-				      	node.style.background = colors['0-'+i+'-'+j]??'blue';
-				      	grid.appendChild(node);
-				    }
+						// Usamos || para que si no hay color en el segundo 0, no de error
+						node.style.background = (colors && colors['0-'+i+'-'+j]) || 'white';
+						grid.appendChild(node);
+					}
 				}
 				document.getElementsByClassName('grid').item(0).style.gridTemplateColumns = 'repeat('+count+',50px)';
 			}
+
+			// Asegúrate de llamar a la función si no lo hace el HTML fuera
+			createSquares();
+
 			const slider = document.getElementById("mySlider");
 
 			slider.addEventListener("input", function() {
-		    	for(var y = 0; y < count; y++){
+				for(var y = 0; y < count; y++){
 					for(var x = 0; x < count; x++){
 						var node = document.getElementById(y+'-'+x);
-						node.style.background = colors[slider.value+'-'+y+'-'+x]??'blue';
+						// El check 'if(node)' evita el error de "reading style of null"
+						if(node) {
+							node.style.background = colors[slider.value+'-'+y+'-'+x] || 'white';
+						}
 					}
 				}
 			});

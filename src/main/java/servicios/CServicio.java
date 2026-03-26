@@ -50,7 +50,6 @@ public class CServicio implements InterfazContactoSim {
             if (lineas.length > 0) {
 
                 int tam = Integer.parseInt(lineas[0].trim());
-                System.out.println(tam);
                 simulacion.setAnchoTablero(tam);
             }
 
@@ -58,11 +57,8 @@ public class CServicio implements InterfazContactoSim {
             int tMax = 0;
 
             for (int i = 1; i < lineas.length; i++) {
-                System.out.println(lineas[i]);
 
                 String[] partes = lineas[i].split(",");
-
-                System.out.println(partes[i]);
 
                 if (partes.length == 4) {
                     int t = Integer.parseInt(partes[0].trim());
