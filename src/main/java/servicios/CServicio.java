@@ -37,16 +37,20 @@ public class CServicio implements InterfazContactoSim {
         try {
             String usuario = "alumno";
 
-            ApiResponse respuesta = this.resultados.resultadosPostWithHttpInfo(usuario, ticket);
-            ResultsResponse datos = (ResultsResponse) respuesta.getData();
+            ApiResponse<ResultsResponse> respuesta = this.resultados.resultadosPostWithHttpInfo(usuario, ticket);
+            ResultsResponse datos = respuesta.getData();
             String texto = datos.getData();
+
+            System.out.println(texto); //Para ver el texto
 
             DatosSimulation simulacion = new DatosSimulation();
 
             String[] lineas = texto.split("\n");
 
             if (lineas.length > 0) {
+
                 int tam = Integer.parseInt(lineas[0].trim());
+                System.out.println(tam);
                 simulacion.setAnchoTablero(tam);
             }
 
@@ -54,7 +58,11 @@ public class CServicio implements InterfazContactoSim {
             int tMax = 0;
 
             for (int i = 1; i < lineas.length; i++) {
+                System.out.println(lineas[i]);
+
                 String[] partes = lineas[i].split(",");
+
+                System.out.println(partes[i]);
 
                 if (partes.length == 4) {
                     int t = Integer.parseInt(partes[0].trim());
