@@ -5,6 +5,9 @@ import modelo.DatosSimulation;
 import modelo.DatosSolicitud;
 import modelo.Entidad;
 import org.springframework.stereotype.Service;
+import servicios.utilidades.ApiClient;
+import servicios.utilidades.ApiResponse;
+import servicios.utilidades.api.ResultadosApi;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +20,13 @@ public class CServicio implements InterfazContactoSim {
     private final Map<Integer,DatosSolicitud> almacenDatos=new HashMap<>();
     private final Random rand=new Random();
 
+    private ResultadosApi resultados;
+    public CServicio() {
+        ApiClient client = new ApiClient();
+        client.setBasePath("http://localhost:8080/");
+        this.resultados = new ResultadosApi(client);
+    }
+
     @Override
     public int solicitarSimulation(DatosSolicitud sol) {
         int token = rand.nextInt(100);
@@ -25,7 +35,35 @@ public class CServicio implements InterfazContactoSim {
     }
     @Override
     public DatosSimulation descargarDatos(int ticket) {
-        return null;
+        try {
+            String usuario = "alumno";
+
+            ApiResponse respuesta = this.resultados.resultadosPostWithHttpInfo(usuario, ticket);
+
+            String texto = (String) respuesta.getData();
+
+            DatosSimulation simulacion = new DatosSimulation();
+
+            String[] lineas = texto.split("\n");
+
+            if (lineas.length > 0) {
+                int tamaño = Integer.parseInt(lineas[0].trim());
+            }
+
+            for (int i = 1; i < lineas.length; i++) {
+                String lineaColor = lineas[i].trim();
+                if (!lineaColor.isEmpty()) {
+                    String[] partes = lineaColor.split(",");
+
+                }
+            }
+
+            return simulacion;
+
+        } catch (Exception e) {
+            System.out.println("Error al descargar los datos : " + e.getMessage());
+            return new DatosSimulation();
+        }
     }
 
     @Override
