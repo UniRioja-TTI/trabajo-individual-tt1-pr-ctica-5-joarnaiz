@@ -4,15 +4,14 @@ import interfaces.InterfazContactoSim;
 import modelo.DatosSimulation;
 import modelo.DatosSolicitud;
 import modelo.Entidad;
+import modelo.Punto;
 import org.springframework.stereotype.Service;
 import servicios.utilidades.ApiClient;
 import servicios.utilidades.ApiResponse;
 import servicios.utilidades.api.ResultadosApi;
+import servicios.utilidades.model.ResultsResponse;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class CServicio implements InterfazContactoSim {
@@ -23,7 +22,7 @@ public class CServicio implements InterfazContactoSim {
     private ResultadosApi resultados;
     public CServicio() {
         ApiClient client = new ApiClient();
-        client.setBasePath("http://localhost:8080/");
+        client.setBasePath("http://localhost:8080");
         this.resultados = new ResultadosApi(client);
     }
 
@@ -39,27 +38,47 @@ public class CServicio implements InterfazContactoSim {
             String usuario = "alumno";
 
             ApiResponse respuesta = this.resultados.resultadosPostWithHttpInfo(usuario, ticket);
-
-            String texto = (String) respuesta.getData();
+            ResultsResponse datos = (ResultsResponse) respuesta.getData();
+            String texto = datos.getData();
 
             DatosSimulation simulacion = new DatosSimulation();
 
             String[] lineas = texto.split("\n");
 
             if (lineas.length > 0) {
-                int tamaño = Integer.parseInt(lineas[0].trim());
+                int tam = Integer.parseInt(lineas[0].trim());
+                simulacion.setAnchoTablero(tam);
             }
 
-            for (int i = 1; i < lineas.length; i++) {
-                String lineaColor = lineas[i].trim();
-                if (!lineaColor.isEmpty()) {
-                    String[] partes = lineaColor.split(",");
+            Map<Integer, List<Punto>> mapa = new HashMap<>();
+            int tMax = 0;
 
+            for (int i = 1; i < lineas.length; i++) {
+                String[] partes = lineas[i].split(",");
+
+                if (partes.length == 4) {
+                    int t = Integer.parseInt(partes[0].trim());
+
+                    Punto p = new Punto();
+                    p.setY(Integer.parseInt(partes[1].trim()));
+                    p.setX(Integer.parseInt(partes[2].trim()));
+                    p.setColor(partes[3].trim());
+
+                    if (t > tMax){
+                        tMax = t;
+                    }
+
+                    if (!mapa.containsKey(t)) {
+                        mapa.put(t, new ArrayList<>());
+                    }
+                    mapa.get(t).add(p);
                 }
             }
 
-            return simulacion;
+            simulacion.setPuntos(mapa);
+            simulacion.setMaxSegundos(tMax);
 
+            return simulacion;
         } catch (Exception e) {
             System.out.println("Error al descargar los datos : " + e.getMessage());
             return new DatosSimulation();
