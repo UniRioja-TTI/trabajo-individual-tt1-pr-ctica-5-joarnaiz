@@ -9,7 +9,10 @@ import org.springframework.stereotype.Service;
 import servicios.utilidades.ApiClient;
 import servicios.utilidades.ApiResponse;
 import servicios.utilidades.api.ResultadosApi;
+import servicios.utilidades.api.SolicitudApi;
 import servicios.utilidades.model.ResultsResponse;
+import servicios.utilidades.model.Solicitud;
+import servicios.utilidades.model.SolicitudResponse;
 
 import java.util.*;
 
@@ -20,17 +23,27 @@ public class CServicio implements InterfazContactoSim {
     private final Random rand=new Random();
 
     private ResultadosApi resultados;
+    private SolicitudApi solicitud;
     public CServicio() {
         ApiClient client = new ApiClient();
         client.setBasePath("http://localhost:8080");
         this.resultados = new ResultadosApi(client);
+        this.solicitud = new SolicitudApi(client);
     }
 
     @Override
     public int solicitarSimulation(DatosSolicitud sol) {
-        int token = rand.nextInt(100);
-        this.almacenDatos.put(token,sol);
-        return token;
+        try{
+            Solicitud s = new Solicitud();
+            ApiResponse<SolicitudResponse> tok = this.solicitud.solicitudSolicitarPostWithHttpInfo("alumno",s);
+            int token = tok.getData().getTokenSolicitud();
+            this.almacenDatos.put(token,sol);
+            return token;
+        }catch (Exception e) {
+            System.out.println("Error al pedir token: " + e.getMessage());
+            return -1;
+        }
+
     }
     @Override
     public DatosSimulation descargarDatos(int ticket) {
