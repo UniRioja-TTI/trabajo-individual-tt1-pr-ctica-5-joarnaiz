@@ -29,7 +29,7 @@ class CServicioTest {
     @Test
     void descargarDatos() {
         DatosSimulation resultado = servicio.descargarDatos(1);
-        assertNull(resultado,"Debe ser null por defecto");
+        assertNotNull(resultado,"No debe ser null por defecto");
     }
 
     @Test
