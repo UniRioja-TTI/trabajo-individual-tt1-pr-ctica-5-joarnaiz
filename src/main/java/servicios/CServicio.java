@@ -26,7 +26,11 @@ public class CServicio implements InterfazContactoSim {
     private SolicitudApi solicitud;
     public CServicio() {
         ApiClient client = new ApiClient();
-        client.setBasePath("http://localhost:8080");
+        String host = System.getenv("HOST");
+        if(host==null || host.isEmpty()){
+            host="http:localhost:8080";
+        }
+        client.setBasePath(host);
         this.resultados = new ResultadosApi(client);
         this.solicitud = new SolicitudApi(client);
     }
