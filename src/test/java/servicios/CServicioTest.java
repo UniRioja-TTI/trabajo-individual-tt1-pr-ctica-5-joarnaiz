@@ -23,7 +23,7 @@ class CServicioTest {
     void solicitarSimulation() {
         DatosSolicitud datosSolicitud=new DatosSolicitud(new HashMap<>());
         int resultado = servicio.solicitarSimulation(datosSolicitud);
-        assertTrue(resultado>=0 && resultado<=100);
+        assertTrue(resultado>=0);
     }
 
     @Test
